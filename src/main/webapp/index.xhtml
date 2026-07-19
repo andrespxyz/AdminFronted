@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+        <ui:define name="titulo">Dashboard</ui:define>
+        <ui:define name="contenido">
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number">#{dashboardBean.resumen['totalSelecciones']}</div>
+                    <div class="label">Selecciones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">#{dashboardBean.resumen['totalPartidos']}</div>
+                    <div class="label">Partidos totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">#{dashboardBean.resumen['partidosFinalizados']}</div>
+                    <div class="label">Finalizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">#{dashboardBean.resumen['totalGoles']}</div>
+                    <div class="label">Goles marcados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">#{dashboardBean.resumen['totalUsuarios']}</div>
+                    <div class="label">Usuarios activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">#{dashboardBean.resumen['partidosProgramados']}</div>
+                    <div class="label">Programados</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4>Panel de Administración — UTN GolMundial 2026</h4>
+                <p style="color:#666; margin-top:8px;">
+                    Bienvenido, <strong>#{loginBean.nombreUsuario}</strong>.
+                    Desde aquí puedes gestionar todos los aspectos del torneo.
+                </p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div class="card">
+                    <h4>Acciones rápidas</h4>
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
+                        <h:link outcome="/partidos" style="padding:10px; background:#1F3864; color:#fff; border-radius:6px; text-decoration:none; text-align:center;">
+                            📅 Gestionar Partidos
+                        </h:link>
+                        <h:link outcome="/selecciones" style="padding:10px; background:#1F3864; color:#fff; border-radius:6px; text-decoration:none; text-align:center;">
+                            🏳 Gestionar Selecciones
+                        </h:link>
+                        <h:link outcome="/usuarios" style="padding:10px; background:#1F3864; color:#fff; border-radius:6px; text-decoration:none; text-align:center;">
+                            👥 Gestionar Usuarios
+                        </h:link>
+                        <h:link outcome="/auditoria" style="padding:10px; background:#1F3864; color:#fff; border-radius:6px; text-decoration:none; text-align:center;">
+                            📋 Ver Auditoría
+                        </h:link>
+                    </div>
+                </div>
+                <div class="card">
+                    <h4>Estado del sistema</h4>
+                    <div style="margin-top:12px;">
+                        <p style="color:#666; font-size:14px; margin-bottom:8px;">
+                            ✅ Backend Estadísticas (.NET + PostgreSQL) — Activo
+                        </p>
+                        <p style="color:#666; font-size:14px; margin-bottom:8px;">
+                            ✅ Backend UTNGolCoin (Jakarta EE + MySQL) — Activo
+                        </p>
+                        <p style="color:#666; font-size:14px; margin-bottom:8px;">
+                            ✅ Frontend Administrativo (JSF + PrimeFaces) — Activo
+                        </p>
+                        <p style="color:#666; font-size:14px;">
+                            ✅ Seed del torneo — 48 selecciones, 72 partidos cargados
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </ui:define>
+    </ui:composition>
+</html>

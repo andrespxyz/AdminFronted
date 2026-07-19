@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="titulo">Auditoría del Sistema</ui:define>
+    <ui:define name="contenido">
+        <div class="card">
+            <h4>Registro de Acciones Administrativas</h4>
+            <h:form id="tablaAuditoria">
+                <p:dataTable value="#{auditoriaBean.auditorias}" var="a"
+                             paginator="true" rows="15" stripedRows="true"
+                             emptyMessage="No hay registros de auditoría.">
+                    <p:column headerText="ID"><h:outputText value="#{a.id}"/></p:column>
+                    <p:column headerText="Usuario"><h:outputText value="#{a.usuarioId}"/></p:column>
+                    <p:column headerText="Acción"><h:outputText value="#{a.accion}"/></p:column>
+                    <p:column headerText="Detalle"><h:outputText value="#{a.detalle}"/></p:column>
+                    <p:column headerText="Fecha"><h:outputText value="#{a.fecha}"/></p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

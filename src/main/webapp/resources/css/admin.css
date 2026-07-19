@@ -1,0 +1,123 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+}
+
+.layout-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background: #1a1a2e;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+.sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid #2d2d4e;
+}
+.sidebar-header h2 {
+    font-size: 18px;
+    color: #4fc3f7;
+}
+.sidebar-header p {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 0;
+}
+.nav-item {
+    display: block;
+    padding: 12px 20px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.nav-item:hover {
+    background: #2d2d4e;
+    color: #4fc3f7;
+}
+
+.main-content {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    background: white;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.topbar h3 {
+    color: #1a1a2e;
+    font-size: 20px;
+}
+
+.content-area {
+    padding: 24px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.card h4 {
+    color: #1a1a2e;
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-align: center;
+    border-top: 4px solid #4fc3f7;
+}
+.stat-card .number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1a1a2e;
+}
+.stat-card .label {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}

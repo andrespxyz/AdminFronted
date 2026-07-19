@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/templates/template.xhtml">
+        <ui:define name="titulo">Gestión de Selecciones</ui:define>
+        <ui:define name="contenido">
+
+            <div class="card">
+                <h4>Nueva Selección</h4>
+                <h:form>
+                    <p:panelGrid columns="4" style="margin-bottom:10px">
+                        <p:outputLabel value="Nombre:"/>
+                        <p:inputText value="#{seleccionBean.seleccion.nombre}" required="true"/>
+                        <p:outputLabel value="Código:"/>
+                        <p:inputText value="#{seleccionBean.seleccion.codigo}" required="true"/>
+                        <p:outputLabel value="Grupo:"/>
+                        <p:inputText value="#{seleccionBean.seleccion.grupo}" required="true"/>
+                        <p:outputLabel value="Escudo (URL):"/>
+                        <p:inputText value="#{seleccionBean.seleccion.escudo}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" action="#{seleccionBean.guardar}"
+                                     update="@form :tablaSelecciones" icon="pi pi-save" styleClass="ui-button-success"/>
+                </h:form>
+            </div>
+
+            <div class="card">
+                <h4>Listado de Selecciones</h4>
+                <h:form id="tablaSelecciones">
+                    <p:dataTable value="#{seleccionBean.selecciones}" var="s"
+                                 paginator="true" rows="10" stripedRows="true"
+                                 emptyMessage="No hay selecciones registradas.">
+                        <p:column headerText="ID"><h:outputText value="#{s.id}"/></p:column>
+                        <p:column headerText="Nombre"><h:outputText value="#{s.nombre}"/></p:column>
+                        <p:column headerText="Código"><h:outputText value="#{s.codigo}"/></p:column>
+                        <p:column headerText="Grupo"><h:outputText value="#{s.grupo}"/></p:column>
+                        <p:column headerText="Puntos"><h:outputText value="#{s.puntos}"/></p:column>
+                        <p:column headerText="PJ"><h:outputText value="#{s.partidosJugados}"/></p:column>
+                        <p:column headerText="PG"><h:outputText value="#{s.partidosGanados}"/></p:column>
+                        <p:column headerText="PE"><h:outputText value="#{s.partidosEmpatados}"/></p:column>
+                        <p:column headerText="PP"><h:outputText value="#{s.partidosPerdidos}"/></p:column>
+                        <p:column headerText="GF"><h:outputText value="#{s.golesFavor}"/></p:column>
+                        <p:column headerText="GC"><h:outputText value="#{s.golesContra}"/></p:column>
+                    </p:dataTable>
+                </h:form>
+            </div>
+
+        </ui:define>
+    </ui:composition>
+</html>

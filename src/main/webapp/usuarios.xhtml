@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/WEB-INF/templates/template.xhtml">
+    <ui:define name="titulo">Gestión de Usuarios</ui:define>
+    <ui:define name="contenido">
+        <div class="card">
+            <h4>Listado de Usuarios</h4>
+            <h:form id="tablaUsuarios">
+                <p:dataTable value="#{usuarioBean.usuarios}" var="u"
+                             paginator="true" rows="10" stripedRows="true"
+                             emptyMessage="No hay usuarios registrados.">
+                    <p:column headerText="ID"><h:outputText value="#{u.id}"/></p:column>
+                    <p:column headerText="Usuario"><h:outputText value="#{u.nombreUsuario}"/></p:column>
+                    <p:column headerText="Email"><h:outputText value="#{u.email}"/></p:column>
+                    <p:column headerText="Rol"><h:outputText value="#{u.rol}"/></p:column>
+                    <p:column headerText="Activo"><h:outputText value="#{u.activo ? 'Sí' : 'No'}"/></p:column>
+                    <p:column headerText="Acción">
+                        <p:commandButton value="Editar Rol" icon="pi pi-user-edit"
+                                         actionListener="#{usuarioBean.setUsuarioEditar(u)}"
+                                         update=":formEditarUsuario" oncomplete="PF('dlgUsuario').show()"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="formEditarUsuario">
+                <p:dialog header="Editar Usuario" widgetVar="dlgUsuario" modal="true" width="400">
+                    <p:panelGrid columns="2" style="margin-bottom:10px">
+                        <p:outputLabel value="Rol:"/>
+                        <p:selectOneMenu value="#{usuarioBean.usuarioEditar.rol}">
+                            <f:selectItem itemLabel="usuario" itemValue="usuario"/>
+                            <f:selectItem itemLabel="administrador" itemValue="administrador"/>
+                            <f:selectItem itemLabel="invitado" itemValue="invitado"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Activo:"/>
+                        <p:selectBooleanCheckbox value="#{usuarioBean.usuarioEditar.activo}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" action="#{usuarioBean.actualizar}"
+                                     update=":tablaUsuarios" oncomplete="PF('dlgUsuario').hide()"
+                                     icon="pi pi-check" styleClass="ui-button-success"/>
+                </p:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>
