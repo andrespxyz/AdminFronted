@@ -17,6 +17,8 @@ public class PartidoBean implements Serializable {
 
     @Inject
     private EstadisticasService service;
+
+    @Inject
     private LoginBean loginBean;
 
     private List<Partido> partidos;
