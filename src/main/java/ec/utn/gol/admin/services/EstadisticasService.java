@@ -183,4 +183,14 @@ public class EstadisticasService {
                     }));
         }
     }
+
+    //========== PARTIDOS ===============
+    public void actualizarEstadoPartido(int partidoId, String estado) throws Exception {
+        try (CloseableHttpClient client = crearClienteSinSSL()) {
+            HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/estado");
+            String body = String.format("{\"estado\":\"%s\"}", estado);
+            request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+            client.execute(request, response -> null);
+        }
+    }
 }

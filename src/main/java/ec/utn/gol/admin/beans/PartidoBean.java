@@ -9,6 +9,8 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Named
@@ -25,9 +27,14 @@ public class PartidoBean implements Serializable {
     private List<Seleccion> selecciones;
     private List<Sede> sedes;
     private Partido partido = new Partido();
+    private Date fechaHoraDate;
+
     private Partido partidoResultado;
     private int golesLocal;
     private int golesVisitante;
+
+    private Partido partidoEstado;
+    private String nuevoEstado;
 
     @PostConstruct
     public void init() {
@@ -42,8 +49,12 @@ public class PartidoBean implements Serializable {
 
     public void guardar() {
         try {
+            if (fechaHoraDate != null) {
+                partido.setFechaHora(fechaHoraDate.toInstant().toString());
+            }
             service.crearPartido(partido);
             partido = new Partido();
+            fechaHoraDate = null;
             partidos = service.getPartidos();
             mensaje("Partido creado correctamente.", false);
         } catch (Exception e) {
@@ -72,6 +83,26 @@ public class PartidoBean implements Serializable {
         this.golesVisitante = 0;
     }
 
+    public void prepararEstado(Partido p) {
+        this.partidoEstado = p;
+        this.nuevoEstado = p.getEstado();
+    }
+
+    public void actualizarEstado() {
+        try {
+            service.actualizarEstadoPartido(partidoEstado.getId(), nuevoEstado);
+            service.registrarAuditoria(
+                    loginBean.getUsuarioId(),
+                    "CAMBIAR_ESTADO_PARTIDO",
+                    "Partido #" + partidoEstado.getId() + " — nuevo estado: " + nuevoEstado
+            );
+            partidos = service.getPartidos();
+            mensaje("Estado actualizado correctamente.", false);
+        } catch (Exception e) {
+            mensaje("Error al actualizar estado: " + e.getMessage(), true);
+        }
+    }
+
     private void mensaje(String texto, boolean error) {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(error ? FacesMessage.SEVERITY_ERROR : FacesMessage.SEVERITY_INFO, texto, null));
@@ -97,6 +128,14 @@ public class PartidoBean implements Serializable {
         this.partido = partido;
     }
 
+    public Date getFechaHoraDate() {
+        return fechaHoraDate;
+    }
+
+    public void setFechaHoraDate(Date fechaHoraDate) {
+        this.fechaHoraDate = fechaHoraDate;
+    }
+
     public Partido getPartidoResultado() {
         return partidoResultado;
     }
@@ -119,5 +158,21 @@ public class PartidoBean implements Serializable {
 
     public void setGolesVisitante(int golesVisitante) {
         this.golesVisitante = golesVisitante;
+    }
+
+    public Partido getPartidoEstado() {
+        return partidoEstado;
+    }
+
+    public void setPartidoEstado(Partido partidoEstado) {
+        this.partidoEstado = partidoEstado;
+    }
+
+    public String getNuevoEstado() {
+        return nuevoEstado;
+    }
+
+    public void setNuevoEstado(String nuevoEstado) {
+        this.nuevoEstado = nuevoEstado;
     }
 }
