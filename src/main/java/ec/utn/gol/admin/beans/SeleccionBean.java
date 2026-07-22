@@ -18,6 +18,9 @@ public class SeleccionBean implements Serializable {
     @Inject
     private EstadisticasService service;
 
+    @Inject
+    private LoginBean loginBean;
+
     private List<Seleccion> selecciones;
     private Seleccion seleccion = new Seleccion();
     private Seleccion seleccionEditar;
@@ -38,11 +41,12 @@ public class SeleccionBean implements Serializable {
     public void guardar() {
         try {
             service.crearSeleccion(seleccion);
+            registrarAuditoriaSeguro("CREAR_SELECCION", "Selección: " + seleccion.getNombre());
             seleccion = new Seleccion();
             cargar();
             mensaje("Selección creada correctamente.", false);
         } catch (Exception e) {
-            e.printStackTrace(); // <-- agrega esta línea
+            e.printStackTrace();
             mensaje("Error al guardar: " + e.getMessage(), true);
         }
     }
@@ -50,10 +54,19 @@ public class SeleccionBean implements Serializable {
     public void actualizar() {
         try {
             service.actualizarSeleccion(seleccionEditar);
+            registrarAuditoriaSeguro("ACTUALIZAR_SELECCION", "Selección #" + seleccionEditar.getId() + " — " + seleccionEditar.getNombre());
             cargar();
             mensaje("Selección actualizada.", false);
         } catch (Exception e) {
             mensaje("Error al actualizar: " + e.getMessage(), true);
+        }
+    }
+
+    private void registrarAuditoriaSeguro(String accion, String detalle) {
+        try {
+            service.registrarAuditoria(loginBean.getUsuarioId(), accion, detalle);
+        } catch (Exception e) {
+            // no bloqueamos la operación principal si falla la auditoría
         }
     }
 

@@ -18,11 +18,16 @@ public class SedeBean implements Serializable {
     @Inject
     private EstadisticasService service;
 
+    @Inject
+    private LoginBean loginBean;
+
     private List<Sede> sedes;
     private Sede sede = new Sede();
 
     @PostConstruct
-    public void init() { cargar(); }
+    public void init() {
+        cargar();
+    }
 
     public void cargar() {
         try {
@@ -35,6 +40,7 @@ public class SedeBean implements Serializable {
     public void guardar() {
         try {
             service.crearSede(sede);
+            registrarAuditoriaSeguro("CREAR_SEDE", "Sede: " + sede.getNombre());
             sede = new Sede();
             cargar();
             mensaje("Sede creada correctamente.", false);
@@ -43,12 +49,28 @@ public class SedeBean implements Serializable {
         }
     }
 
-    private void mensaje(String texto, boolean error) {
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(error ? FacesMessage.SEVERITY_ERROR : FacesMessage.SEVERITY_INFO, texto, null));
+    private void registrarAuditoriaSeguro(String accion, String detalle) {
+        try {
+            service.registrarAuditoria(loginBean.getUsuarioId(), accion, detalle);
+        } catch (Exception e) {
+            // no bloqueamos la operación principal si falla la auditoría
+        }
     }
 
-    public List<Sede> getSedes() { return sedes; }
-    public Sede getSede() { return sede; }
-    public void setSede(Sede sede) { this.sede = sede; }
+    private void mensaje(String texto, boolean error) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(error ? FacesMessage.SEVERITY_ERROR : FacesMessage.SEVERITY_INFO, texto, null));
+    }
+
+    public List<Sede> getSedes() {
+        return sedes;
+    }
+
+    public Sede getSede() {
+        return sede;
+    }
+
+    public void setSede(Sede sede) {
+        this.sede = sede;
+    }
 }
