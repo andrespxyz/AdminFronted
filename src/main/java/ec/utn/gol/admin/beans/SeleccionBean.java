@@ -92,4 +92,15 @@ public class SeleccionBean implements Serializable {
     public void setSeleccionEditar(Seleccion seleccionEditar) {
         this.seleccionEditar = seleccionEditar;
     }
+
+    public void eliminar(Seleccion s) {
+        try {
+            service.eliminarSeleccion(s.getId());
+            cargar();
+            mensaje("Selección eliminada correctamente.", false);
+        } catch (Exception e) {
+            mensaje("Error al eliminar: " + e.getMessage(), true);
+        }
+    }
+
 }

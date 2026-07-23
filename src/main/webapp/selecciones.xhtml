@@ -45,6 +45,12 @@
                         <p:column headerText="GF"><h:outputText value="#{s.golesFavor}"/></p:column>
                         <p:column headerText="GC"><h:outputText value="#{s.golesContra}"/></p:column>
                         <p:column headerText="Acciones">
+                            <p:commandButton value="Eliminar" icon="pi pi-trash" styleClass="ui-button-danger"
+                                             actionListener="#{seleccionBean.eliminar(s)}" update=":tablaSelecciones"
+                                             process="@this">
+                                <p:confirm header="Confirmar" message="¿Eliminar esta selección? Esta acción no se puede deshacer."
+                                           icon="pi pi-exclamation-triangle"/>
+                            </p:commandButton>
                             <p:commandButton value="Editar" icon="pi pi-pencil"
                                              actionListener="#{seleccionBean.prepararEditar(s)}"
                                              update=":formEditarSeleccion" oncomplete="PF('dlgEditarSeleccion').show()"/>

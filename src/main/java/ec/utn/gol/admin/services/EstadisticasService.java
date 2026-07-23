@@ -223,4 +223,21 @@ public class EstadisticasService {
             client.execute(request, response -> null);
         }
     }
+
+    public void eliminarSeleccion(int id) throws Exception {
+        try (CloseableHttpClient client = crearClienteSinSSL()) {
+            HttpDelete request = new HttpDelete(BASE_URL + "/Selecciones/" + id);
+            request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
+            client.execute(request, response -> null);
+        }
+    }
+
+    public void eliminarSede(int id) throws Exception {
+        try (CloseableHttpClient client = crearClienteSinSSL()) {
+            HttpDelete request = new HttpDelete(BASE_URL + "/Sedes/" + id);
+            request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
+            client.execute(request, response -> null);
+        }
+    }
+
 }

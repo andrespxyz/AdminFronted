@@ -91,4 +91,14 @@ public class SedeBean implements Serializable {
     public void setSedeEditar(Sede sedeEditar) {
         this.sedeEditar = sedeEditar;
     }
+
+    public void eliminar(Sede s) {
+        try {
+            service.eliminarSede(s.getId());
+            cargar();
+            mensaje("Sede eliminada correctamente.", false);
+        } catch (Exception e) {
+            mensaje("Error al eliminar: " + e.getMessage(), true);
+        }
+    }
 }
