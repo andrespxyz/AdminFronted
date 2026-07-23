@@ -45,12 +45,14 @@ public class PartidoBean implements Serializable {
     }
 
     public void guardar() {
+        if (partido.getSeleccionLocalId() == partido.getSeleccionVisitanteId()) {
+            mensaje("El equipo local y el equipo visitante no pueden ser la misma selección.", true);
+            return;
+        }
+
         try {
             if (fechaHoraDate != null) {
                 partido.setFechaHora(fechaHoraDate.toInstant().toString());
-            }
-            if (partido.getEstado() == null || partido.getEstado().isBlank()) {
-                partido.setEstado("programado");
             }
             service.crearPartido(partido);
             partido = new Partido();
