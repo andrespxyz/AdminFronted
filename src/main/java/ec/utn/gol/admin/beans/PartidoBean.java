@@ -45,7 +45,8 @@ public class PartidoBean implements Serializable {
     }
 
     public void guardar() {
-        if (partido.getSeleccionLocalId() == partido.getSeleccionVisitanteId()) {
+        if (partido.getSeleccionLocalId() != 0
+                && partido.getSeleccionLocalId() == partido.getSeleccionVisitanteId()) {
             mensaje("El equipo local y el equipo visitante no pueden ser la misma selección.", true);
             return;
         }
@@ -180,5 +181,4 @@ public class PartidoBean implements Serializable {
         this.nuevoEstado = nuevoEstado;
     }
 
-    
 }
