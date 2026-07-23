@@ -219,6 +219,7 @@ public class EstadisticasService {
             HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/estado");
             String body = String.format("{\"estado\":\"%s\"}", estado);
             request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }

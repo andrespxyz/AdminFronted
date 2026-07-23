@@ -20,6 +20,7 @@ public class LoginBean implements Serializable {
     private String nombreUsuario;
     private String rol;
     private int usuarioId;
+    private String token;
     private boolean logueado = false;
 
     public String login() {
@@ -33,6 +34,7 @@ public class LoginBean implements Serializable {
             this.usuarioId = ((Number) resultado.get("id")).intValue();
             this.nombreUsuario = (String) resultado.get("nombreUsuario");
             this.rol = (String) resultado.get("rol");
+            this.token = (String) resultado.get("token");
             this.logueado = true;
 
             if (!"administrador".equals(rol)) {
@@ -68,6 +70,10 @@ public class LoginBean implements Serializable {
 
     public int getUsuarioId() {
         return usuarioId;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public String getEmail() {

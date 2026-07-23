@@ -48,6 +48,15 @@ public class SeleccionBean implements Serializable {
         }
     }
 
+    public void prepararEditar(Seleccion s) {
+        this.seleccionEditar = new Seleccion();
+        this.seleccionEditar.setId(s.getId());
+        this.seleccionEditar.setNombre(s.getNombre());
+        this.seleccionEditar.setCodigo(s.getCodigo());
+        this.seleccionEditar.setGrupo(s.getGrupo());
+        this.seleccionEditar.setEscudo(s.getEscudo());
+    }
+
     public void actualizar() {
         try {
             service.actualizarSeleccion(seleccionEditar);

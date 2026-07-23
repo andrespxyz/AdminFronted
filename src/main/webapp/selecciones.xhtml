@@ -44,7 +44,30 @@
                         <p:column headerText="PP"><h:outputText value="#{s.partidosPerdidos}"/></p:column>
                         <p:column headerText="GF"><h:outputText value="#{s.golesFavor}"/></p:column>
                         <p:column headerText="GC"><h:outputText value="#{s.golesContra}"/></p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton value="Editar" icon="pi pi-pencil"
+                                             actionListener="#{seleccionBean.prepararEditar(s)}"
+                                             update=":formEditarSeleccion" oncomplete="PF('dlgEditarSeleccion').show()"/>
+                        </p:column>
                     </p:dataTable>
+                </h:form>
+
+                <h:form id="formEditarSeleccion">
+                    <p:dialog header="Editar Selección" widgetVar="dlgEditarSeleccion" modal="true" width="400">
+                        <p:panelGrid columns="2" style="margin-bottom:10px" rendered="#{seleccionBean.seleccionEditar != null}">
+                            <p:outputLabel value="Nombre:"/>
+                            <p:inputText value="#{seleccionBean.seleccionEditar.nombre}" required="true"/>
+                            <p:outputLabel value="Código:"/>
+                            <p:inputText value="#{seleccionBean.seleccionEditar.codigo}" required="true"/>
+                            <p:outputLabel value="Grupo:"/>
+                            <p:inputText value="#{seleccionBean.seleccionEditar.grupo}" required="true"/>
+                            <p:outputLabel value="Escudo (URL):"/>
+                            <p:inputText value="#{seleccionBean.seleccionEditar.escudo}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Confirmar" action="#{seleccionBean.actualizar}"
+                                         update=":tablaSelecciones" oncomplete="PF('dlgEditarSeleccion').hide()"
+                                         icon="pi pi-check" styleClass="ui-button-success"/>
+                    </p:dialog>
                 </h:form>
             </div>
 
