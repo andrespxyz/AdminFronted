@@ -49,6 +49,9 @@ public class PartidoBean implements Serializable {
             if (fechaHoraDate != null) {
                 partido.setFechaHora(fechaHoraDate.toInstant().toString());
             }
+            if (partido.getEstado() == null || partido.getEstado().isBlank()) {
+                partido.setEstado("programado");
+            }
             service.crearPartido(partido);
             partido = new Partido();
             fechaHoraDate = null;
