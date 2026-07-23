@@ -74,6 +74,14 @@
                                              actionListener="#{partidoBean.prepararEstado(p)}"
                                              update=":formEstado" oncomplete="PF('dlgEstado').show()"/>
                         </p:column>
+                        <p:column headerText="Eliminar">
+                            <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger"
+                                             actionListener="#{partidoBean.eliminar(p)}" update=":tablaPartidos"
+                                             process="@this">
+                                <p:confirm header="Confirmar" message="¿Eliminar este partido? Esta acción no se puede deshacer."
+                                           icon="pi pi-exclamation-triangle"/>
+                            </p:commandButton>
+                        </p:column>
                     </p:dataTable>
                 </h:form>
 

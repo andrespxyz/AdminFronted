@@ -251,4 +251,11 @@ public class EstadisticasService {
         }
     }
 
+    public void eliminarPartido(int id) throws Exception {
+        try (CloseableHttpClient client = crearClienteSinSSL()) {
+            HttpDelete request = new HttpDelete(BASE_URL + "/Partidos/" + id);
+            request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
+            client.execute(request, response -> null);
+        }
+    }
 }

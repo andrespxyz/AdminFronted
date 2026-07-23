@@ -75,6 +75,16 @@ public class PartidoBean implements Serializable {
         }
     }
 
+    public void eliminar(Partido p) {
+        try {
+            service.eliminarPartido(p.getId());
+            partidos = service.getPartidos();
+            mensaje("Partido eliminado correctamente.", false);
+        } catch (Exception e) {
+            mensaje("Error al eliminar: " + e.getMessage(), true);
+        }
+    }
+
     public void prepararResultado(Partido p) {
         this.partidoResultado = p;
         this.golesLocal = 0;
@@ -169,4 +179,6 @@ public class PartidoBean implements Serializable {
     public void setNuevoEstado(String nuevoEstado) {
         this.nuevoEstado = nuevoEstado;
     }
+
+    
 }
