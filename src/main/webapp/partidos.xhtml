@@ -41,7 +41,7 @@
                         <p:inputText value="#{partidoBean.partido.grupo}" placeholder="A"/>
                     </p:panelGrid>
                     <p:commandButton value="Guardar Partido" action="#{partidoBean.guardar}"
-                                     update="@form :tablaPartidos" icon="pi pi-save" styleClass="ui-button-success"/>
+                                     update="@form :tablaPartidos :globalMessages" icon="pi pi-save" styleClass="ui-button-success"/>
                 </h:form>
             </div>
 
@@ -76,7 +76,7 @@
                         </p:column>
                         <p:column headerText="Eliminar">
                             <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger"
-                                             actionListener="#{partidoBean.eliminar(p)}" update=":tablaPartidos"
+                                             actionListener="#{partidoBean.eliminar(p)}" update=":tablaPartidos :globalMessages"
                                              process="@this">
                                 <p:confirm header="Confirmar" message="¿Eliminar este partido? Esta acción no se puede deshacer."
                                            icon="pi pi-exclamation-triangle"/>
@@ -94,7 +94,7 @@
                             <p:inputNumber value="#{partidoBean.golesVisitante}" minValue="0"/>
                         </p:panelGrid>
                         <p:commandButton value="Confirmar" action="#{partidoBean.registrarResultado}"
-                                         update=":tablaPartidos" oncomplete="PF('dlgResultado').hide()"
+                                         update=":tablaPartidos :globalMessages" oncomplete="PF('dlgResultado').hide()"
                                          icon="pi pi-check" styleClass="ui-button-success"/>
                     </p:dialog>
                 </h:form>
@@ -108,7 +108,7 @@
                             </p:selectOneMenu>
                         </p:panelGrid>
                         <p:commandButton value="Confirmar" action="#{partidoBean.actualizarEstado}"
-                                         update=":tablaPartidos" oncomplete="PF('dlgEstado').hide()"
+                                         update=":tablaPartidos :globalMessages" oncomplete="PF('dlgEstado').hide()"
                                          icon="pi pi-check" styleClass="ui-button-success"/>
                     </p:dialog>
                 </h:form>
