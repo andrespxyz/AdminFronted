@@ -1,12 +1,26 @@
 package ec.utn.gol.admin.models;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 public class Partido {
     private int id;
+
+    @Min(value = 1, message = "Debes seleccionar la selección local")
     private int seleccionLocalId;
+
+    @Min(value = 1, message = "Debes seleccionar la selección visitante")
     private int seleccionVisitanteId;
+
+    @Min(value = 1, message = "Debes seleccionar la sede")
     private int sedeId;
+
+    @NotBlank(message = "La fecha y hora son obligatorias")
     private String fechaHora;
+
+    @NotBlank(message = "La fase es obligatoria")
     private String fase;
+
     private String grupo;
     private String estado;
     private Integer golesLocal;

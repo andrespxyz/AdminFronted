@@ -20,9 +20,6 @@ public class PartidoBean implements Serializable {
     @Inject
     private EstadisticasService service;
 
-    @Inject
-    private LoginBean loginBean;
-
     private List<Partido> partidos;
     private List<Seleccion> selecciones;
     private List<Sede> sedes;
@@ -65,11 +62,7 @@ public class PartidoBean implements Serializable {
     public void registrarResultado() {
         try {
             service.registrarResultado(partidoResultado.getId(), golesLocal, golesVisitante);
-            service.registrarAuditoria(
-                    loginBean.getUsuarioId(),
-                    "REGISTRAR_RESULTADO",
-                    "Partido #" + partidoResultado.getId() + " — " + golesLocal + ":" + golesVisitante
-            );
+            // Auditoría: la registra automáticamente EstadisticasAPI vía header X-Usuario-Id.
             partidos = service.getPartidos();
             mensaje("Resultado registrado correctamente.", false);
         } catch (Exception e) {
@@ -91,11 +84,7 @@ public class PartidoBean implements Serializable {
     public void actualizarEstado() {
         try {
             service.actualizarEstadoPartido(partidoEstado.getId(), nuevoEstado);
-            service.registrarAuditoria(
-                    loginBean.getUsuarioId(),
-                    "CAMBIAR_ESTADO_PARTIDO",
-                    "Partido #" + partidoEstado.getId() + " — nuevo estado: " + nuevoEstado
-            );
+            // Auditoría: la registra automáticamente EstadisticasAPI vía header X-Usuario-Id.
             partidos = service.getPartidos();
             mensaje("Estado actualizado correctamente.", false);
         } catch (Exception e) {

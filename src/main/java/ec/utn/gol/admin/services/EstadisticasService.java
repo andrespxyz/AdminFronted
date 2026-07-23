@@ -1,8 +1,10 @@
 package ec.utn.gol.admin.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ec.utn.gol.admin.beans.LoginBean;
 import ec.utn.gol.admin.models.*;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.hc.client5.http.classic.methods.*;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -19,6 +21,15 @@ import java.util.Map;
 
 @ApplicationScoped
 public class EstadisticasService {
+
+    @Inject
+    private LoginBean loginBean;
+
+    // Adjunta el id del admin logueado como header X-Usuario-Id para que
+    // EstadisticasAPI registre la auditoría automáticamente (ver AuditoriaHelper).
+    private void agregarHeaderUsuario(org.apache.hc.client5.http.classic.methods.HttpUriRequestBase request) {
+        request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
+    }
 
     private CloseableHttpClient crearClienteSinSSL() throws Exception {
         SSLContext sslContext = SSLContextBuilder.create()
@@ -54,6 +65,7 @@ public class EstadisticasService {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPost request = new HttpPost(BASE_URL + "/Selecciones");
             request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }
@@ -62,6 +74,7 @@ public class EstadisticasService {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPut request = new HttpPut(BASE_URL + "/Selecciones/" + s.getId());
             request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }
@@ -81,6 +94,16 @@ public class EstadisticasService {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPost request = new HttpPost(BASE_URL + "/Sedes");
             request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
+            client.execute(request, response -> null);
+        }
+    }
+
+    public void actualizarSede(Sede s) throws Exception {
+        try (CloseableHttpClient client = crearClienteSinSSL()) {
+            HttpPut request = new HttpPut(BASE_URL + "/Sedes/" + s.getId());
+            request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }
@@ -100,6 +123,7 @@ public class EstadisticasService {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPost request = new HttpPost(BASE_URL + "/Partidos");
             request.setEntity(new StringEntity(mapper.writeValueAsString(p), ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }
@@ -109,6 +133,7 @@ public class EstadisticasService {
             HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/resultado");
             String body = String.format("{\"golesLocal\":%d,\"golesVisitante\":%d}", golesLocal, golesVisitante);
             request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }
@@ -128,6 +153,7 @@ public class EstadisticasService {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPut request = new HttpPut(BASE_URL + "/Usuarios/" + u.getId());
             request.setEntity(new StringEntity(mapper.writeValueAsString(u), ContentType.APPLICATION_JSON));
+            agregarHeaderUsuario(request);
             client.execute(request, response -> null);
         }
     }
@@ -150,6 +176,9 @@ public class EstadisticasService {
     }
 
     //============ Registrar Auditoria =========
+    // deprecated: reemplazado por header X-Usuario-Id, ver EstadisticasAPI
+    // (AuditoriaHelper). Ya no se invoca desde los beans; se deja sin borrar
+    // para referencia del flujo anterior y como plan de rollback rápido.
     public void registrarAuditoria(int usuarioId, String accion, String detalle) throws Exception {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPost request = new HttpPost(BASE_URL + "/Auditorias");

@@ -1,10 +1,15 @@
 package ec.utn.gol.admin.models;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class Usuario {
     private int id;
     private String nombreUsuario;
     private String email;
+
+    @NotBlank(message = "El rol es obligatorio")
     private String rol;
+
     private String fechaRegistro;
     private boolean activo;
 

@@ -1,10 +1,23 @@
 package ec.utn.gol.admin.models;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class Seleccion {
     private int id;
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
     private String nombre;
+
+    @NotBlank(message = "El código es obligatorio")
+    @Size(min = 2, max = 5, message = "El código debe tener entre 2 y 5 caracteres")
     private String codigo;
+
+    @NotBlank(message = "El grupo es obligatorio")
+    @Size(max = 2, message = "El grupo debe tener máximo 2 caracteres")
     private String grupo;
+
     private String escudo;
     private int partidosJugados;
     private int partidosGanados;

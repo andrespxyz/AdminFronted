@@ -1,10 +1,21 @@
 package ec.utn.gol.admin.models;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 public class Sede {
     private int id;
+
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
+
+    @NotBlank(message = "La ciudad es obligatoria")
     private String ciudad;
+
+    @NotBlank(message = "El país es obligatorio")
     private String pais;
+
+    @Min(value = 1, message = "La capacidad debe ser mayor a 0")
     private int capacidad;
 
     public int getId() { return id; }

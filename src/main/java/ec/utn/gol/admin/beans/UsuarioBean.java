@@ -18,9 +18,6 @@ public class UsuarioBean implements Serializable {
     @Inject
     private EstadisticasService service;
 
-    @Inject
-    private LoginBean loginBean;
-
     private List<Usuario> usuarios;
     private Usuario usuarioEditar;
 
@@ -40,21 +37,11 @@ public class UsuarioBean implements Serializable {
     public void actualizar() {
         try {
             service.actualizarUsuario(usuarioEditar);
-            registrarAuditoriaSeguro("ACTUALIZAR_USUARIO",
-                    "Usuario #" + usuarioEditar.getId() + " — rol: " + usuarioEditar.getRol()
-                    + ", activo: " + usuarioEditar.isActivo());
+            // Auditoría: la registra automáticamente EstadisticasAPI vía header X-Usuario-Id.
             cargar();
             mensaje("Usuario actualizado.", false);
         } catch (Exception e) {
             mensaje("Error al actualizar: " + e.getMessage(), true);
-        }
-    }
-
-    private void registrarAuditoriaSeguro(String accion, String detalle) {
-        try {
-            service.registrarAuditoria(loginBean.getUsuarioId(), accion, detalle);
-        } catch (Exception e) {
-            // no bloqueamos la operación principal si falla la auditoría
         }
     }
 

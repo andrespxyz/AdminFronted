@@ -18,11 +18,9 @@ public class SedeBean implements Serializable {
     @Inject
     private EstadisticasService service;
 
-    @Inject
-    private LoginBean loginBean;
-
     private List<Sede> sedes;
     private Sede sede = new Sede();
+    private Sede sedeEditar;
 
     @PostConstruct
     public void init() {
@@ -40,7 +38,7 @@ public class SedeBean implements Serializable {
     public void guardar() {
         try {
             service.crearSede(sede);
-            registrarAuditoriaSeguro("CREAR_SEDE", "Sede: " + sede.getNombre());
+            // Auditoría: la registra automáticamente EstadisticasAPI vía header X-Usuario-Id.
             sede = new Sede();
             cargar();
             mensaje("Sede creada correctamente.", false);
@@ -49,11 +47,23 @@ public class SedeBean implements Serializable {
         }
     }
 
-    private void registrarAuditoriaSeguro(String accion, String detalle) {
+    public void prepararEditar(Sede s) {
+        this.sedeEditar = new Sede();
+        this.sedeEditar.setId(s.getId());
+        this.sedeEditar.setNombre(s.getNombre());
+        this.sedeEditar.setCiudad(s.getCiudad());
+        this.sedeEditar.setPais(s.getPais());
+        this.sedeEditar.setCapacidad(s.getCapacidad());
+    }
+
+    public void actualizar() {
         try {
-            service.registrarAuditoria(loginBean.getUsuarioId(), accion, detalle);
+            service.actualizarSede(sedeEditar);
+            // Auditoría: la registra automáticamente EstadisticasAPI vía header X-Usuario-Id.
+            cargar();
+            mensaje("Sede actualizada.", false);
         } catch (Exception e) {
-            // no bloqueamos la operación principal si falla la auditoría
+            mensaje("Error al actualizar: " + e.getMessage(), true);
         }
     }
 
@@ -72,5 +82,13 @@ public class SedeBean implements Serializable {
 
     public void setSede(Sede sede) {
         this.sede = sede;
+    }
+
+    public Sede getSedeEditar() {
+        return sedeEditar;
+    }
+
+    public void setSedeEditar(Sede sedeEditar) {
+        this.sedeEditar = sedeEditar;
     }
 }
