@@ -21,7 +21,7 @@
                     <p:column headerText="Activo"><h:outputText value="#{u.activo ? 'Sí' : 'No'}"/></p:column>
                     <p:column headerText="Acción">
                         <p:commandButton value="Editar Rol" icon="pi pi-user-edit"
-                                         actionListener="#{usuarioBean.setUsuarioEditar(u)}"
+                                         actionListener="#{usuarioBean.prepararEditar(u)}"
                                          update=":formEditarUsuario" oncomplete="PF('dlgUsuario').show()"/>
                     </p:column>
                 </p:dataTable>

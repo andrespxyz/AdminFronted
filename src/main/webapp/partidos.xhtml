@@ -74,6 +74,11 @@
                                              actionListener="#{partidoBean.prepararEstado(p)}"
                                              update=":formEstado" oncomplete="PF('dlgEstado').show()"/>
                         </p:column>
+                        <p:column headerText="Editar">
+                            <p:commandButton value="Editar" icon="pi pi-pencil"
+                                             actionListener="#{partidoBean.prepararEditar(p)}"
+                                             update=":formEditarPartido" oncomplete="PF('dlgEditarPartido').show()"/>
+                        </p:column>
                         <p:column headerText="Eliminar">
                             <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger"
                                              actionListener="#{partidoBean.eliminar(p)}" update=":tablaPartidos :globalMessages"
@@ -104,11 +109,47 @@
                             <p:outputLabel value="Nuevo Estado:"/>
                             <p:selectOneMenu value="#{partidoBean.nuevoEstado}">
                                 <f:selectItem itemLabel="programado" itemValue="programado"/>
-                                <f:selectItem itemLabel="finalizado" itemValue="finalizado"/>
+                                <f:selectItem itemLabel="en_juego" itemValue="en_juego"/>
                             </p:selectOneMenu>
+                            <p:outputLabel value="Para finalizar un partido usá 'Registrar' resultado, no este diálogo."
+                                           style="grid-column: span 2; color: #888; font-size: 0.85em;"/>
                         </p:panelGrid>
                         <p:commandButton value="Confirmar" action="#{partidoBean.actualizarEstado}"
                                          update=":tablaPartidos :globalMessages" oncomplete="PF('dlgEstado').hide()"
+                                         icon="pi pi-check" styleClass="ui-button-success"/>
+                    </p:dialog>
+                </h:form>
+                <h:form id="formEditarPartido">
+                    <p:dialog header="Editar Partido" widgetVar="dlgEditarPartido" modal="true" width="450">
+                        <p:panelGrid columns="2" style="margin-bottom:10px" rendered="#{partidoBean.partidoEditar != null}">
+                            <p:outputLabel value="Selección Local:"/>
+                            <p:selectOneMenu value="#{partidoBean.partidoEditar.seleccionLocalId}" required="true">
+                                <f:selectItem itemLabel="-- Seleccionar --" itemValue="0"/>
+                                <f:selectItems value="#{partidoBean.selecciones}" var="s"
+                                               itemLabel="#{s.nombre}" itemValue="#{s.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Selección Visitante:"/>
+                            <p:selectOneMenu value="#{partidoBean.partidoEditar.seleccionVisitanteId}" required="true">
+                                <f:selectItem itemLabel="-- Seleccionar --" itemValue="0"/>
+                                <f:selectItems value="#{partidoBean.selecciones}" var="s"
+                                               itemLabel="#{s.nombre}" itemValue="#{s.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Sede:"/>
+                            <p:selectOneMenu value="#{partidoBean.partidoEditar.sedeId}" required="true">
+                                <f:selectItem itemLabel="-- Seleccionar --" itemValue="0"/>
+                                <f:selectItems value="#{partidoBean.sedes}" var="s"
+                                               itemLabel="#{s.nombre}" itemValue="#{s.id}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Fecha y Hora (hora Ecuador):"/>
+                            <p:calendar value="#{partidoBean.fechaHoraEditarDate}" pattern="yyyy-MM-dd HH:mm"
+                                        timeZone="America/Guayaquil" navigator="true"/>
+                            <p:outputLabel value="Fase:"/>
+                            <p:inputText value="#{partidoBean.partidoEditar.fase}"/>
+                            <p:outputLabel value="Grupo:"/>
+                            <p:inputText value="#{partidoBean.partidoEditar.grupo}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar Cambios" action="#{partidoBean.actualizarPartido}"
+                                         update=":tablaPartidos :globalMessages" oncomplete="PF('dlgEditarPartido').hide()"
                                          icon="pi pi-check" styleClass="ui-button-success"/>
                     </p:dialog>
                 </h:form>

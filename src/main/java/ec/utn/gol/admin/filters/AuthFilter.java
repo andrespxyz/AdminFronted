@@ -23,10 +23,13 @@ public class AuthFilter implements Filter {
 
         String uri = req.getRequestURI();
 
-        // Permitir acceso libre al login y recursos estáticos
-        boolean esPublico = uri.contains("login.xhtml")
-                || uri.contains("jakarta.faces.resource")
-                || uri.contains("/resources/");
+        // Permitir acceso libre al login y recursos estáticos. Antes usaba
+        // uri.contains(...), que trata como pública cualquier URI que tenga esa
+        // subcadena en cualquier posición, no solo esas rutas exactas.
+        String contexto = req.getContextPath();
+        boolean esPublico = uri.equals(contexto + "/login.xhtml")
+                || uri.contains("/jakarta.faces.resource/")
+                || uri.startsWith(contexto + "/resources/");
 
         if (esPublico) {
             chain.doFilter(request, response);

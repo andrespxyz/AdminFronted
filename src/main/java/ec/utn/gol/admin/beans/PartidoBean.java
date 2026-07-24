@@ -33,6 +33,9 @@ public class PartidoBean implements Serializable {
     private Partido partidoEstado;
     private String nuevoEstado;
 
+    private Partido partidoEditar;
+    private Date fechaHoraEditarDate;
+
     @PostConstruct
     public void init() {
         try {
@@ -90,6 +93,44 @@ public class PartidoBean implements Serializable {
         this.partidoResultado = p;
         this.golesLocal = 0;
         this.golesVisitante = 0;
+    }
+
+    // No existía forma de corregir selección/sede/fecha/fase/grupo de un partido
+    // ya creado — solo estado y resultado. La única alternativa era borrar y
+    // recrear, perdiendo el id y cualquier resultado ya cargado.
+    public void prepararEditar(Partido p) {
+        this.partidoEditar = new Partido();
+        this.partidoEditar.setId(p.getId());
+        this.partidoEditar.setSeleccionLocalId(p.getSeleccionLocalId());
+        this.partidoEditar.setSeleccionVisitanteId(p.getSeleccionVisitanteId());
+        this.partidoEditar.setSedeId(p.getSedeId());
+        this.partidoEditar.setFechaHora(p.getFechaHora());
+        this.partidoEditar.setFase(p.getFase());
+        this.partidoEditar.setGrupo(p.getGrupo());
+        try {
+            this.fechaHoraEditarDate = p.getFechaHora() != null
+                    ? Date.from(java.time.Instant.parse(p.getFechaHora()))
+                    : null;
+        } catch (Exception e) {
+            this.fechaHoraEditarDate = null;
+        }
+    }
+
+    public void actualizarPartido() {
+        if (partidoEditar.getSeleccionLocalId() == partidoEditar.getSeleccionVisitanteId()) {
+            mensaje("El equipo local y el equipo visitante no pueden ser la misma selección.", true);
+            return;
+        }
+        try {
+            if (fechaHoraEditarDate != null) {
+                partidoEditar.setFechaHora(fechaHoraEditarDate.toInstant().toString());
+            }
+            service.actualizarPartido(partidoEditar);
+            partidos = service.getPartidos();
+            mensaje("Partido actualizado correctamente.", false);
+        } catch (Exception e) {
+            mensaje("Error al actualizar: " + e.getMessage(), true);
+        }
     }
 
     public void prepararEstado(Partido p) {
@@ -179,6 +220,22 @@ public class PartidoBean implements Serializable {
 
     public void setNuevoEstado(String nuevoEstado) {
         this.nuevoEstado = nuevoEstado;
+    }
+
+    public Partido getPartidoEditar() {
+        return partidoEditar;
+    }
+
+    public void setPartidoEditar(Partido partidoEditar) {
+        this.partidoEditar = partidoEditar;
+    }
+
+    public Date getFechaHoraEditarDate() {
+        return fechaHoraEditarDate;
+    }
+
+    public void setFechaHoraEditarDate(Date fechaHoraEditarDate) {
+        this.fechaHoraEditarDate = fechaHoraEditarDate;
     }
 
 }

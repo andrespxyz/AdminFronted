@@ -25,10 +25,42 @@ public class EstadisticasService {
     @Inject
     private LoginBean loginBean;
 
-    // Adjunta el id del admin logueado como header X-Usuario-Id para que
-    // EstadisticasAPI registre la auditoría automáticamente (ver AuditoriaHelper).
+    // Adjunta el id del admin logueado (para auditoría, ver AuditoriaHelper) y el
+    // JWT de sesión: EstadisticasAPI ahora exige [Authorize(Roles="admin")] en sus
+    // endpoints mutantes y en algunos GET (Usuarios, Auditorías), donde antes no
+    // validaba ningún token.
     private void agregarHeaderUsuario(org.apache.hc.client5.http.classic.methods.HttpUriRequestBase request) {
         request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
+        agregarAuthorization(request);
+    }
+
+    private void agregarAuthorization(org.apache.hc.client5.http.classic.methods.HttpUriRequestBase request) {
+        String token = loginBean.getToken();
+        if (token != null && !token.isBlank()) {
+            request.setHeader("Authorization", "Bearer " + token);
+        }
+    }
+
+    // Antes solo crearPartido comprobaba el código de estado de la respuesta; el
+    // resto descartaba la respuesta con `response -> null`, así que un error del
+    // backend (400/401/403/409...) se mostraba como "éxito" en la UI. Ahora todas
+    // las llamadas mutantes pasan por acá y lanzan si el status no es 2xx.
+    private void ejecutarMutante(org.apache.hc.client5.http.classic.methods.HttpUriRequestBase request) throws Exception {
+        agregarHeaderUsuario(request);
+        try (CloseableHttpClient client = crearClienteSinSSL()) {
+            client.execute(request, response -> {
+                int status = response.getCode();
+                if (status < 200 || status >= 300) {
+                    String cuerpo = "";
+                    try {
+                        cuerpo = new String(response.getEntity().getContent().readAllBytes());
+                    } catch (Exception ignored) {
+                    }
+                    throw new RuntimeException("EstadisticasAPI respondió " + status + ": " + cuerpo);
+                }
+                return null;
+            });
+        }
     }
 
     private CloseableHttpClient crearClienteSinSSL() throws Exception {
@@ -62,21 +94,15 @@ public class EstadisticasService {
     }
 
     public void crearSeleccion(Seleccion s) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPost request = new HttpPost(BASE_URL + "/Selecciones");
-            request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPost request = new HttpPost(BASE_URL + "/Selecciones");
+        request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     public void actualizarSeleccion(Seleccion s) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPut request = new HttpPut(BASE_URL + "/Selecciones/" + s.getId());
-            request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPut request = new HttpPut(BASE_URL + "/Selecciones/" + s.getId());
+        request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     // ========== SEDES ==========
@@ -91,21 +117,15 @@ public class EstadisticasService {
     }
 
     public void crearSede(Sede s) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPost request = new HttpPost(BASE_URL + "/Sedes");
-            request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPost request = new HttpPost(BASE_URL + "/Sedes");
+        request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     public void actualizarSede(Sede s) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPut request = new HttpPut(BASE_URL + "/Sedes/" + s.getId());
-            request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPut request = new HttpPut(BASE_URL + "/Sedes/" + s.getId());
+        request.setEntity(new StringEntity(mapper.writeValueAsString(s), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     // ========== PARTIDOS ==========
@@ -120,39 +140,29 @@ public class EstadisticasService {
     }
 
     public void crearPartido(Partido p) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPost request = new HttpPost(BASE_URL + "/Partidos");
-            request.setEntity(new StringEntity(mapper.writeValueAsString(p), ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> {
-                int status = response.getCode();
-                if (status < 200 || status >= 300) {
-                    String cuerpo = "";
-                    try {
-                        cuerpo = new String(response.getEntity().getContent().readAllBytes());
-                    } catch (Exception ignored) {
-                    }
-                    throw new RuntimeException("EstadisticasAPI respondió " + status + ": " + cuerpo);
-                }
-                return null;
-            });
-        }
+        HttpPost request = new HttpPost(BASE_URL + "/Partidos");
+        request.setEntity(new StringEntity(mapper.writeValueAsString(p), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
+    }
+
+    public void actualizarPartido(Partido p) throws Exception {
+        HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + p.getId());
+        request.setEntity(new StringEntity(mapper.writeValueAsString(p), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     public void registrarResultado(int partidoId, int golesLocal, int golesVisitante) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/resultado");
-            String body = String.format("{\"golesLocal\":%d,\"golesVisitante\":%d}", golesLocal, golesVisitante);
-            request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/resultado");
+        String body = String.format("{\"golesLocal\":%d,\"golesVisitante\":%d}", golesLocal, golesVisitante);
+        request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     // ========== USUARIOS ==========
     public List<Usuario> getUsuarios() throws Exception {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpGet request = new HttpGet(BASE_URL + "/Usuarios");
+            agregarAuthorization(request);
             return client.execute(request, response -> {
                 Usuario[] arr = mapper.readValue(response.getEntity().getContent(), Usuario[].class);
                 return Arrays.asList(arr);
@@ -161,19 +171,19 @@ public class EstadisticasService {
     }
 
     public void actualizarUsuario(Usuario u) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPut request = new HttpPut(BASE_URL + "/Usuarios/" + u.getId());
-            request.setEntity(new StringEntity(mapper.writeValueAsString(u), ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPut request = new HttpPut(BASE_URL + "/Usuarios/" + u.getId());
+        request.setEntity(new StringEntity(mapper.writeValueAsString(u), ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     // ========== AUTH ==========
     public Map<String, Object> login(String email, String password) throws Exception {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpPost request = new HttpPost(BASE_URL + "/Auth/login");
-            String body = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", email, password);
+            // Antes se armaba el JSON con String.format: un email/password con
+            // comillas o backslash rompía el payload. mapper.writeValueAsString
+            // escapa correctamente, igual que en el resto del servicio.
+            String body = mapper.writeValueAsString(Map.of("email", email, "password", password));
             request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
             return client.execute(request, response -> {
                 if (response.getCode() != 200) {
@@ -205,6 +215,7 @@ public class EstadisticasService {
     public List<Map<String, Object>> getAuditorias() throws Exception {
         try (CloseableHttpClient client = crearClienteSinSSL()) {
             HttpGet request = new HttpGet(BASE_URL + "/Auditorias");
+            agregarAuthorization(request);
             return client.execute(request, response -> {
                 return mapper.readValue(response.getEntity().getContent(),
                         new com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Object>>>() {
@@ -226,36 +237,21 @@ public class EstadisticasService {
 
     //========== PARTIDOS ===============
     public void actualizarEstadoPartido(int partidoId, String estado) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/estado");
-            String body = String.format("{\"estado\":\"%s\"}", estado);
-            request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-            agregarHeaderUsuario(request);
-            client.execute(request, response -> null);
-        }
+        HttpPut request = new HttpPut(BASE_URL + "/Partidos/" + partidoId + "/estado");
+        String body = mapper.writeValueAsString(Map.of("estado", estado));
+        request.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+        ejecutarMutante(request);
     }
 
     public void eliminarSeleccion(int id) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpDelete request = new HttpDelete(BASE_URL + "/Selecciones/" + id);
-            request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
-            client.execute(request, response -> null);
-        }
+        ejecutarMutante(new HttpDelete(BASE_URL + "/Selecciones/" + id));
     }
 
     public void eliminarSede(int id) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpDelete request = new HttpDelete(BASE_URL + "/Sedes/" + id);
-            request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
-            client.execute(request, response -> null);
-        }
+        ejecutarMutante(new HttpDelete(BASE_URL + "/Sedes/" + id));
     }
 
     public void eliminarPartido(int id) throws Exception {
-        try (CloseableHttpClient client = crearClienteSinSSL()) {
-            HttpDelete request = new HttpDelete(BASE_URL + "/Partidos/" + id);
-            request.setHeader("X-Usuario-Id", String.valueOf(loginBean.getUsuarioId()));
-            client.execute(request, response -> null);
-        }
+        ejecutarMutante(new HttpDelete(BASE_URL + "/Partidos/" + id));
     }
 }

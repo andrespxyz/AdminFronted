@@ -38,7 +38,14 @@ public class LoginBean implements Serializable {
             this.logueado = true;
 
             if (!"administrador".equals(rol)) {
+                // Limpiar todo, no solo `logueado`: si no, un usuario no-admin queda
+                // con un JWT válido guardado en la sesión (getToken() lo seguiría
+                // devolviendo), aunque isLogueado()==false evite el acceso por AuthFilter.
                 this.logueado = false;
+                this.token = null;
+                this.rol = null;
+                this.nombreUsuario = null;
+                this.usuarioId = 0;
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Solo administradores pueden acceder.", null));
                 return null;

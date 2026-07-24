@@ -26,6 +26,7 @@ public class DashboardBean implements Serializable {
                     "totalSelecciones", 0,
                     "totalPartidos", 0,
                     "partidosFinalizados", 0,
+                    "partidosProgramados", 0,
                     "totalGoles", 0,
                     "totalUsuarios", 0
             );

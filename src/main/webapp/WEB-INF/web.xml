@@ -28,4 +28,16 @@
         <param-name>primefaces.THEME</param-name>
         <param-value>saga</param-value>
     </context-param>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- Sin esto, un postback JSF sobre una sesión ya expirada (timeout del
+         contenedor con una pestaña vieja abierta) mostraba la página de error
+         genérica de WildFly con stack trace en vez de volver al login. -->
+    <error-page>
+        <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
+        <location>/login.xhtml</location>
+    </error-page>
 </web-app>

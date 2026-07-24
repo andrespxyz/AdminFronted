@@ -34,6 +34,20 @@ public class UsuarioBean implements Serializable {
         }
     }
 
+    // A diferencia de antes (setUsuarioEditar(u) apuntaba directo al objeto de la
+    // lista `usuarios`), esto clona: si el admin abre el diálogo y lo cierra sin
+    // guardar, la fila de la tabla ya no queda mutada en memoria con datos que
+    // nunca se enviaron al backend.
+    public void prepararEditar(Usuario u) {
+        this.usuarioEditar = new Usuario();
+        this.usuarioEditar.setId(u.getId());
+        this.usuarioEditar.setNombreUsuario(u.getNombreUsuario());
+        this.usuarioEditar.setEmail(u.getEmail());
+        this.usuarioEditar.setRol(u.getRol());
+        this.usuarioEditar.setFechaRegistro(u.getFechaRegistro());
+        this.usuarioEditar.setActivo(u.isActivo());
+    }
+
     public void actualizar() {
         try {
             service.actualizarUsuario(usuarioEditar);
